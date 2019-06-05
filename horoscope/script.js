@@ -5,34 +5,51 @@ function init() {
     let httpRequest
 
     function makeRequest(event) {
-        event.preventDefault()
+        
         httpRequest = new XMLHttpRequest();
         if (!httpRequest) {
-            alert("Sorry Babe, Cannot Get HTTP")
+            alert("Sorry, Cannot Get HTTP")
         }
 
         httpRequest.onreadystatechange = processContent
         httpRequest.open("GET", "http://makeup-api.herokuapp.com/api/v1/products.json?brand=maybelline")
         httpRequest.send()
     }
-    console.log("hi")
+    
     function processContent() {
         if (httpRequest.readyState === httpRequest.DONE) {
             let data = httpRequest.responseText
 
             if (data) {
                 data = JSON.parse(data)
-                if (data.result) displayContent(data.result)
+                if (data) displayContent(data)
             } else {
                 alert("please try again")
             }
         }
     }
 
-    function displayContent(data) {
-        const horo = document.querySelector('.horoscope')
+    function displayContent(items) {
+        let disp = document.querySelector('.horoscope > .card')
+        let display = ``
+        console.log(items[0])
+        // items.forEach(item => display.push(item))
+        for (let item in items){
+                console.log(items[item]["name"])
+                display += `<div class="card mb-4 shadow-sm">
+                                <div class="card-header">
+                                    <h4 class="my-0 font-weight-normal"> ${items[item]["name"]} </h4>
+                                </div>
+                                <div class="card-body">
+                                    <h1 class="card-title pricing-card-title">Price ${items[item]["price"]}</h1>
+                                </div>
+                                <div class="card-body">
+                                    <h1 class="card-title pricing-card-title">Rating ${items[item]["rating"]}</h1>
+                                </div>
+                            </div>`
+        }
 
-        horo.innerHTML = data;
+        disp.innerHTML = display;
     }
 
     makeRequest()
